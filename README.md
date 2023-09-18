@@ -2,7 +2,7 @@
 [Bamboo](https://www.atlassian.com/software/bamboo) is a self-hosted, continuous integration and delivery tool developed by Atlassian, the makers of popular software including Jira and Confluence among others.
 
 ## Reccommended Resources
-TODO: In other makefiles, change "Reccommended Reading" to "Reccommended Resources"
+- [Bamboo Essential Training](https://www.linkedin.com/learning/bamboo-essential-training)
 - [Understanding the Bamboo CI Server](https://confluence.atlassian.com/bamboo/understanding-the-bamboo-ci-server-289277285.html)
 - [Using Bamboo](https://confluence.atlassian.com/bamboo0903/using-bamboo-1236445012.html)
 - [Bamboo FAQ](https://confluence.atlassian.com/bamboo0903/bamboo-faq-1236446400.html)
@@ -25,7 +25,7 @@ Having the following items in place before starting this lab will help you have 
 1. On the CloudFormation homepage, select **Create stack**.  If the button includes a dropdown, select **With new resources (standard)**.
 1. Under "Prerequisite - Prepare template", confirm that "Template is ready" is selected.
 1. Under "Specify template", select **Upload a template file**.  Select **Chose file**.  Browse to the exercise files for this lesson on your local system.  Select [`bamboo-cloudformation-template.yml`](./bamboo-cloudformation-template.yml).  Select **Open**. Select **Next**.
-1. Enter a name for the stack under "Stack name"; `bamboo` is a good choice. *Note that the name should only include letters (A-Z and a-z), numbers (0-9), and dashes (-)*.  
+1. Enter a name for the stack under "Stack name"; `bamboo` is a good choice. *Note that the name should only include letters (A-Z and a-z), numbers (0-9), and dashes (-)*.
 1. Accept the defaults under "Parameters" and select **Next**.
 1. On the "Configure stack options" screen, keep all options as the default.  Scroll to the bottom of the page and select **Next**.
 1.  On the "Review" screen, scroll to the bottom of the page and select the **checkbox** next to "I acknowledge that AWS CloudFormation might create IAM resources with custom names".  Select **Submit**.
@@ -80,12 +80,12 @@ Before starting these steps, open the Output tab of the Clouformation stack for 
 ### 1. Create a GitHub repo for the sample application code
 Because this course covers multiple tools, a dedicated repo is need for each tool to prevent unexpected deployments to the sample-application.
 
-1. Create a new GitHub repo.
+1. Create a new GitHub repo. Give the repo a name and description.  Please select **Public** for the repo visibility to simplify access.  Select the option to add a README file and select **Python** when adding a `.gitignore` file.
 1. From ther repo home page, select **Add file -> Upload files**.
 1. Select **choose your files** and browse to the exercise files for this lesson on your local system.
 1. Select all of the files and then select **Open**.
 1. After the files have been uploaded, enter a commit message and select **Commit changes**.
- 
+
 ### 2. Setup the pipeline
 #### 2.1 Create a project and build plan
 1. From the home page of the Bamboo server, select **Create -> Create project**.
@@ -121,10 +121,10 @@ For the first "Command" task type, you'll need to add a configuration for the `m
 |:-----------|:-------------------|:------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Script    | Check-Lint-Test   | <pre>. ./local/bin/activate</br>make check lint test</pre> |                                                                                                                                                                                       |                                                                                                                                                                |
 | Command   | Build             | <pre>make</pre>                                                        | <pre>clean build</pre>                                                                                                                                                                |                                                                                                                                                                |
-| Command   | Deploy Staging    | <pre>make</pre>                                                      | <pre>deploy ENVIRONMENT="Staging" PLATFORM="Bamboo" FUNCTION=${bamboo.STAGING_FUNCTION_NAME} VERSION=${bamboo.planRepository.revision} BUILD_NUMBER=${bamboo.buildNumber} </pre>     | <pre>AWS_ACCESS_KEY_ID=${bamboo.AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${bamboo.AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=${bamboo.AWS_DEFAULT_REGION}</pre> |
-| Command   | Test Staging      | <pre>make</pre>                                                      | <pre>testdeployment URL=${bamboo.STAGING_URL} </pre>                                                                                                                                 |                                                                                                                                                                |
-| Command   | Deploy Production | <pre>make</pre>                                                      | <pre>deploy ENVIRONMENT="Production" PLATFORM="Bamboo" FUNCTION=${bamboo.PRODUCTION_FUNCTION_NAME} VERSION=${bamboo.planRepository.revision} BUILD_NUMBER=${bamboo.buildNumber}</pre> | <pre>AWS_ACCESS_KEY_ID=${bamboo.AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${bamboo.AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=${bamboo.AWS_DEFAULT_REGION}</pre> |
-| Command   | Test Production      | <pre>make</pre>                                                      | <pre>testdeployment URL=${bamboo.PRODUCTION_URL}</pre>                                                                                                                                |                                                                                                                                                                |
+| Command   | Deploy Staging    | <pre>make</pre>                                                      | <pre>deploy PLATFORM="Bamboo" FUNCTION=${bamboo.STAGING_FUNCTION_NAME} VERSION=${bamboo.planRepository.revision} BUILD_NUMBER=${bamboo.buildNumber} </pre>     | <pre>AWS_ACCESS_KEY_ID=${bamboo.AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${bamboo.AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=${bamboo.AWS_DEFAULT_REGION}</pre> |
+| Command   | Test Staging      | <pre>make</pre>                                                      | <pre>testdeployment URL=${bamboo.STAGING_URL} VERSION=${bamboo.planRepository.revision}</pre>                                                                                                                                 |                                                                                                                                                                |
+| Command   | Deploy Production | <pre>make</pre>                                                      | <pre>deploy PLATFORM="Bamboo" FUNCTION=${bamboo.PRODUCTION_FUNCTION_NAME} VERSION=${bamboo.planRepository.revision} BUILD_NUMBER=${bamboo.buildNumber}</pre> | <pre>AWS_ACCESS_KEY_ID=${bamboo.AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${bamboo.AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=${bamboo.AWS_DEFAULT_REGION}</pre> |
+| Command   | Test Production      | <pre>make</pre>                                                      | <pre>testdeployment URL=${bamboo.PRODUCTION_URL} VERSION=${bamboo.planRepository.revision}</pre>                                                                                                                                |                                                                                                                                                                |
 
 After all 7 pipeline stages are in place (for a total of 8, including the "Source Code Checkout"), your configuration should apprear as follows:
 
@@ -154,7 +154,7 @@ Select **Save and continue**.
 
 ### 3. Run the pipeline
 1. On the far right of the page, select **Run -> Run plan**.
-2. Allow the build to complete.  
+2. Allow the build to complete.
 3. If any errors are encountered, review the logs for errors and make corrections as needed.  Consider reviewing the configuration steps for the tasks and the values for the variables.  If you are not able to resolve the errors, please post a question on LinkinedIn Learning in the course Q&A section.
 4. Open the URLs for the sample application's staging and production environments.  For both environments, confirm that the deployment platform is "Bamboo" and the build number matches the last successful build number.
 
